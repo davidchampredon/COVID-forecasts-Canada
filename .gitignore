@@ -1,0 +1,41 @@
+
+# ===== Data =====
+
+data/datax-*.csv
+
+# ===== Documentation =====
+
+doc/*.log
+doc/*.gz
+doc/*.aux
+doc/*.out
+doc/*.pdf
+
+
+# ===== Outputs =====
+
+src/plots/*.pdf
+src/datax-*.csv
+src/Rplots.pdf
+src/out*.txt
+
+src/out/*.out
+src/out/*.txt
+
+src/*.RData
+src/*.rds
+
+
+# ===== Reports =====
+
+reports/*.out
+reports/*.aux
+reports/*.log
+reports/*.gz
+reports/*.pdf
+
+
+# ===== Other stuff ====
+
+*.DS_Store
+src/*.swp

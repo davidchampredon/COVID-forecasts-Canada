@@ -1,0 +1,4 @@
+lag_infection_to_report, 10
+lag_report_to_hosp, 1
+lag_hosp_to_critical, 1
+lag_critical_to_death, 1

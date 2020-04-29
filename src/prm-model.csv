@@ -1,0 +1,16 @@
+alpha , 5.0
+kappa , 0.0
+GI_span , 14 
+GI_mean , 4.5
+GI_var , 7
+horizon , 360
+lag.test, 6
+prop.susceptible, 0.80,
+prop.true.pos.beta1, 20
+prop.true.pos.beta2, 60
+prop.pos.hosp, 0.125
+prop.hosp.critical, 0.39
+prop.critical.death, 0.85,
+n.mc, 500
+
+

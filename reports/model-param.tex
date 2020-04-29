@@ -1,0 +1,18 @@
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{l c c}
+\hline
+\bf Parameter & \bf Value & \bf Source \\
+\hline
+initial prop. susceptible  & 80\% & assumption \\
+prop. confirmed cases out of true incidence & 25\% (95\%CI: 15-35\%) & \href{https://cmmid.github.io/topics/covid19/severity/global_cfr_estimates.html}{CMMID} \\
+prop. confirmed to hospitalized & 12.5\% & PHO daily reports \\
+prop. hospitalized to critical care & 39\% & PHO daily reports \\
+prop. critical to death & 65 -- 85\% & fitted on death reports \\
+generation interval  (mean, sd) & $m=4.5$ days ; $\sigma=2.6$ & various studies \\
+contact heterogeneity & high ($2\leq\alpha\leq 6$) & assumption\\
+\hline
+\end{tabular}
+\end{center}
+\end{table}%

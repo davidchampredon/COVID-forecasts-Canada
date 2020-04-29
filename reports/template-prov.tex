@@ -1,0 +1,329 @@
+\documentclass[10pt]{article} 
+\usepackage[letterpaper, 
+			top=20mm, 
+			bottom = 25mm,
+			left = 25mm,
+			right = 25mm]{geometry}
+\usepackage[parfill]{parskip}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage[useregional]{datetime2}
+\usepackage{lastpage}
+
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\usepackage[]{hyperref}
+\hypersetup{
+    colorlinks,
+    linkcolor={black},
+    citecolor={blue!50!black},
+    urlcolor={blue!99!black}
+}
+
+\usepackage[font={small,it}]{caption} 
+\captionsetup[table]{skip=10pt}
+
+\def\asof{\today}
+% \def\asof{2020-04-09} % <--- Manual override 
+
+% ===== HEADERS / FOOTERS =====
+\usepackage{fancyhdr}
+\setlength{\headheight}{15.2pt}
+\lhead[]{\textsf{COVID19 Forecasting Report}}
+\rhead[]{\asof}
+\renewcommand{\headrulewidth}{0.8pt}
+\fancyfoot[L]{David Champredon}
+\fancyfoot[C]{\scriptsize{\DTMnow}}
+\fancyfoot[R]{\thepage / \pageref{LastPage}}
+\renewcommand{\footrulewidth}{0.4pt}
+\pagestyle{fancy}
+% ==============================
+
+
+% ====== MACROS ========
+
+%\newcommand{\prov}{ON} % <-- for DEBUG
+
+\newcommand{\pathOut}{../src/out/}
+\newcommand{\scen}[1]{\textbf{\textsf{#1}}}
+\newcommand{\Ro}{\ensuremath{\mathcal{R}_0}\xspace}
+\newcommand{\Rt}{\ensuremath{\mathcal{R}_t}\xspace}
+\newcommand{\warning}[1]{\textbf{\textcolor{red}{#1}}\xspace}
+
+% ==============
+
+
+
+\begin{document}  
+\thispagestyle{empty}
+
+\Huge{\textsf{COVID19 Forecasting Report}}\\
+
+%\begin{table}[ht]
+\normalsize
+\begin{tabular}{ll}
+\textsf{As of date} & \textsf{: \asof} \\
+\textsf{Region} & \textsf{: \prov} \\
+\textsf{Contact} & \textsf{: David Champredon (\texttt{david.champredon@gmail}) - Western University, London, ON} \\
+\end{tabular}
+%\end{table}
+
+\vspace*{15mm}
+
+% =================================
+% ========== FOREWORDS ============
+% =================================
+
+\normalsize
+
+\input{assumptions.tex}
+
+
+
+\newpage
+
+
+% ======================================
+% ========== PAST & CURRENT ============
+% ======================================
+
+
+\section*{Past and Current Dynamic}
+
+
+\input{dataused.tex}
+
+
+\subsection*{Doubling Time}
+
+The \emph{daily} confirmed cases are used to estimated the doubling time of the epidemic (\autoref{fig:doubling}). 
+The doubling time is the expected number of days it takes for the number of daily confirmed cases to double. The higher the doubling time, the slower the epidemic progression is.
+The evolution of the doubling time quantifies any acceleration or deceleration of the outbreak. In particular, it can reveal the impact (or the lack of) of an intervention. 
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 1.1\textwidth]{../src/plots/plot-data-\prov.pdf}
+\caption{Left Panel: Reported tests and deaths. The grey segment represents, for each time series, the portion of the data used to calculate the doubling time. Right Panel: Evolution of the doubling time when calculated from a sliding observation window starting 10 days before the calculation date. The shaded area represents the 95\% confidence interval. The vertical scale is cropped at 60 days for clarity.}
+\label{fig:doubling}
+\end{center}
+\end{figure}
+
+
+%\begin{figure}[h!]
+%\begin{center}
+%
+%\includegraphics[width = 0.45\textwidth]{../src/plots/plot-data-growth-cone-\prov.pdf}
+%\hspace{5mm}
+%\includegraphics[width = 0.45\textwidth]{../src/plots/plot-data-dbl-slide-\prov.pdf}
+%
+%\caption{
+%Left Panel: New positive tests reported daily. The dashed line shows, for reference, the trajectories of cases doubling every 2 and 4 days.
+%Right Panel: Doubling time (in days). The doubling times were estimated with a linear regression on the count of the log number of daily confirmed cases. }
+%\label{}
+%\end{center}
+%\end{figure}
+
+
+\subsection*{Estimated effect of social distancing}
+
+
+The effect of social distancing is estimated by fitting an epidemic model that has a discontinuity in the transmission rate on March 20 (see \autoref{tab:scenarios} for the definition of scenario \scen{ISO1} later in this report). The size of the discontinuity is calibrated on positive tests observed after March 20 (declaration of the state of emergency in Ontario was on March 17). 
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{lc c}
+\hline
+\bf  & \bf Mean & \bf 95\%CI \\
+\hline
+
+
+Transmission rate reduction & 
+\input{../src/out/lambda-mean-\prov-ISO1.txt}\%&
+( \input{../src/out/lambda-lo-\prov-ISO1.txt}\% --
+\input{../src/out/lambda-hi-\prov-ISO1.txt}\%)\\
+
+
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+\newpage
+
+\subsection*{Effective Reproduction Numbers}
+
+The \emph{effective} reproduction number  -- traditionally noted \Rt \, -- takes into account the depletion of susceptible individuals in the population: it is defined as the average number of secondary transmissions from an infectious individual (not necessarily in a fully susceptible population). The subscript $t$ represents the time when \Rt is calculated.
+When the value of \Rt decreases below 1, this signals the epidemic is decelerating.
+The evolution of \Rt since the date when enough data is available for each region is shown in \autoref{fig:Rt}. 
+
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 1\textwidth]{../src/plots/plot-data-Rt.pdf}
+\caption{Evolution of the effective reproduction number \Rt (blue line). The green area marks the threshold level of $\Rt \leq 1$ where the epidemic starts to decelerate. The labelled number indicates the current mean estimate of \Rt.}
+\label{fig:Rt}
+\end{center}
+\end{figure}
+
+
+
+
+% ======================================
+% ============== FORECASTS =============
+% ======================================
+
+\newpage
+
+
+\section*{Forecasts}
+
+
+
+Once the mathematical model is fitted to observed data, the future trajectory of incidence is simulated. Uncertainty about the values of model parameters, as well as the transmission and reporting processes, are taken into account and propagated in the forecasts. 
+Control measures are simulated in 3 different scenarios.
+
+
+
+\subsection*{Intervention Scenario Definitions}
+
+\input{scenarios.tex}
+
+\vspace*{5mm}
+
+\subsection*{Model Parameters}
+
+\input{model-param.tex}
+
+
+
+\newpage
+
+\subsection*{Total Burden Projections}
+
+
+
+The total burden in \autoref{fig:fcstCum} considers the cumulative number of patients that have been admitted to hospital, admitted in critical care, and who died throughout the full duration of the simulated epidemics.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 0.99\textwidth]{../src/plots/plot-analyze-cum-\prov.pdf}
+\caption{Estimated total burden over the course of simulated epidemics. \textsf{hosp}: hospitalized cases; \textsf{critical}: hospitalized cases in critical care; \textsf{death}: number of deaths. The lower panel is an example of a  probabilistic interpretation of the upper panel.}
+\label{fig:fcstCum}
+\end{center}
+\end{figure}
+
+
+\newpage 
+
+\subsection*{Peak Timing Projections}
+
+
+
+The simulated epidemics allow us to forecast the time when the daily number of hospital admissions peaks. \autoref{fig:fcstPkt} shows the possible peak date ranges for each scenario.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 0.99\textwidth]{../src/plots/plot-analyze-pkt-\prov.pdf}
+\caption{Forecast for the peak time of hospital admissions.}
+\label{fig:fcstPkt}
+\end{center}
+\end{figure}
+
+\newpage
+
+\subsection*{Peak Daily Intensities Projections}
+
+
+
+Similarly as the peak time forecasts, the peak intensity for the three outcomes (hospitalized, critical care and death) can be projected. \autoref{fig:fcstPkv} shows the possible peak intensity ranges for each scenario and outcome.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 0.99\textwidth]{../src/plots/plot-analyze-pkv-\prov.pdf}
+\caption{Daily peak projections. \textsf{hosp}: hospitalized cases; \textsf{critical}: hospitalized cases in critical care; \textsf{death}: number of deaths.}
+\label{fig:fcstPkv}
+\end{center}
+\end{figure}
+
+
+
+
+\newpage
+
+\subsection*{Short-Term Projections}
+
+The probability that the sum of the confirmed cases over the \emph{next} 7 days will be higher than the sum of the \emph{past} 7 days is shown in \autoref{fig:probaHigher} for  scenario \scen{BASELINE} and \scen{ISO1} (scenarios \scen{ISO1} and \scen{ISO2} are equivalent before May 15).
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 0.8\textwidth]{../src/plots/plot-analyze-probaHigher-\prov.pdf}
+\caption{For each scenario, probability that the sum of confirmed cases for next week (7 days) will be higher than last week. }
+\label{fig:probaHigher}
+\end{center}
+\end{figure}
+
+
+The mean cumulative number of deaths, as well as the probability that this number will be above 1,000 by May 15, is displayed in the Table below for %\scen{BASELINE} and
+\scen{ISO1} (scenarios \scen{ISO1} and \scen{ISO2} are equivalent before May 15). The probability distribution is shown in \autoref{fig:cumdeathShort}.
+
+
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{c r C{44mm}}
+\hline
+\bf Scenario & \bf Mean & \bf Proba. Cum. Death above 1,000 by May 15  \\
+\hline
+
+%\sf BASELINE & 
+%\input{../src/out/cumdeath-shortterm-mean-\prov-BASELINE.txt}&
+%\input{../src/out/cumdeath-shortterm-proba-above-\prov-BASELINE.txt}\% \\
+
+\sf ISO1 & 
+\input{../src/out/cumdeath-shortterm-mean-\prov-ISO1.txt}&
+\input{../src/out/cumdeath-shortterm-proba-above-\prov-ISO1.txt}\% \\
+
+%\sf ISO2 & 
+%\input{../src/out/cumdeath-shortterm-mean-\prov-ISO2.txt}&
+%\input{../src/out/cumdeath-shortterm-proba-above-\prov-ISO2.txt}\% \\
+
+\hline
+\end{tabular}
+\label{tab:cumdeathShort}
+\end{center}
+\end{table}
+
+
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width = 0.80\textwidth]{../src/plots/plot-cumdeath-shortterm-\prov.pdf}
+\caption{Distribution of the simulated cumulative number of deaths by May 15 according to scenario \scen{ISO1}.}
+\label{fig:cumdeathShort}
+\end{center}
+\end{figure}
+
+
+
+
+
+
+
+
+\end{document}
+
+
+
+
+
+
+

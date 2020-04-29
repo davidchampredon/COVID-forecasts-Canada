@@ -1,0 +1,32 @@
+
+
+\renewcommand{\arraystretch}{1.7}
+
+\begin{table}[h!]
+\caption{Intervention scenarios used in the forecasts.}
+\begin{tabular}{l p{0.8\textwidth}} %
+
+\hline
+\bf Name & \bf Description \\
+\hline
+\scen{Baseline} & This is the baseline scenario, assuming the transmission rate will remain the same as it was before the first social distancing intervention. This scenario is fitted to positive tests reports until March 20th.\\
+
+\scen{ISO1} & This is the scenario we are currently in, where strong social distancing measures took effect after March 20th and are kept as is for 6 months.\\
+
+\scen{ISO2} & This is the scenario we are currently in, where strong social distancing measures took effect after March 20th. Social distancing will gradually be relaxed from May 15 until July 15. At that point, the transmission rate will return to the same value as before the social distancing measures. \\
+\hline
+\end{tabular}
+\label{tab:scenarios}
+\end{table}
+
+
+
+\vspace*{5mm}
+Projections are presented for three type of outcomes:
+
+\begin{tabular}{ll}
+\textsf{hosp} & : admissions to hospital \\
+\textsf{critical} &: transfer to critical care of hospitalized cases (incidence)\\
+\textsf{death} &: deceased cases
+\end{tabular}
+
