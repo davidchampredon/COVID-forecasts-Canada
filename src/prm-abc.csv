@@ -1,4 +1,4 @@
-n.abc, 200
+n.abc, 10000
 prior.R0.mean , 2
 prior.R0.sd , 0.7
 prior.alpha.min , 3
@@ -10,6 +10,6 @@ prior.prop.crit.death.max, 0.90
 adj.death.min, -0.001
 adj.death.max, 0.00100000001
 recency, 0
-ncpus, 1
+ncpus, 0
 weight.death, 1.0
 

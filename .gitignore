@@ -9,7 +9,7 @@ doc/*.log
 doc/*.gz
 doc/*.aux
 doc/*.out
-doc/*.pdf
+
 
 
 # ===== Outputs =====
