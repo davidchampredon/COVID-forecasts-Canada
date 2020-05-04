@@ -7,12 +7,15 @@ source('read-data.R')
 
 pop = read.csv('../data/populations.csv', header = F)
 names(pop) = c('Province', 'popsize')
+pop$Province <- as.character(pop$Province)
 
 fname <- 'https://raw.githubusercontent.com/wzmli/COVID19-Canada/master/COVID19_Canada.csv'
 
 x <- get_data(prov=NULL, fname) %>%
-    digest_data(test.pos = TRUE) %>%
-    filter(name != 'death')
+    select(Province, Date, total_testing, confirmed_positive) %>%
+    group_by(Province) %>%
+    mutate(tested = c(NA,diff(total_testing))) %>%
+    mutate(positive = c(NA,diff(confirmed_positive)))
 
 sort(unique(x$Province))
 df  = x %>%
@@ -22,7 +25,7 @@ df  = x %>%
                            'QC', 
                            'SK'
                            ))%>%   # Problems with NB, NL, etc.
-    pivot_wider(names_from = name, values_from = value) %>%
+    # pivot_wider(names_from = name, values_from = value) %>%
     left_join(pop, by='Province') %>%
     filter(positive>0 | tested >0) %>%
     mutate(posrate = positive / tested) %>%
@@ -30,6 +33,13 @@ df  = x %>%
     filter(posrate >0) %>%
     filter(!is.na(posrate)) %>% 
     filter(!is.infinite(posrate))
+
+sort(unique(df$Province))
+
+df = df %>%
+    group_by(Province) %>%
+    mutate(time = as.numeric(Date - min(Date)))
+
 
 df2 = df %>% 
     group_by(Province) %>%
@@ -107,22 +117,25 @@ g1
 
 
 g2 = df %>%
+    mutate(Days.from.first.test = time) %>%
     ggplot(aes(x = testprop, y = posrate))+
     geom_path(alpha=0.1, col='orange') +
-    geom_point(aes(colour=time))+
+    geom_point(aes(colour=Days.from.first.test))+
     geom_point(data=df2, 
                colour='black', 
                fill='pink', 
                pch=21, size=3, stroke=2)+
     scale_color_gradient(low='yellow', high='red')+
-    facet_wrap(~Province, scales = 'free_x')+
-    scale_x_log10() +
+    facet_wrap(~Province, scales = 'fixed')+
+    scale_x_log10(limits = c(1e-8, 1)) +
     scale_y_log10()+
     theme(panel.grid.minor = element_blank(),
           strip.background = element_rect(fill='grey95'),
           strip.text = element_text(face='bold'))+
+    # guides(color=guide_legend(title="Days from first test"))+
     ggtitle('Positive vs. Tested')+
-    xlab('Proportion tested (T/N)') + ylab('Proportion positive (P/T)')
+    xlab('Proportion tested (T/N)') + 
+    ylab('Proportion positive (P/T)')
 g2
 
 pdf('tp.pdf')
