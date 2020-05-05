@@ -53,9 +53,9 @@ The parameter $\ell$ is a constant that represents the reporting delay.
 I assume the numbers of hospitalized cases at time $H_t$ is directly proportional to the number of positive cases $P_t$. Similarly, the number of patients needing critical care (in ICUs with or without ventilators) $C_t$ is proportional to the hospitalized cases, and finally the number of deaths $D_t$ is proportional to the number of critically ill patients. Assuming again a stochastic relationship:
 
 \begin{eqnarray}
-H_t & \sim \pois(h\, P_t)\\
-C_t & \sim \pois(k\, H_t)\\
-D_t & \sim \pois(d\, C_t\, e^{\varepsilon t})
+H_t & \sim &\pois(h\, P_t)\\
+C_t & \sim &\pois(k\, H_t)\\
+D_t & \sim &\pois(d\, C_t\, e^{\varepsilon t})
 \end{eqnarray}
 
 The term $e^{\varepsilon t}$ is an adjustment for the different growth rate observed between death and reported cases. The parameter $\varepsilon$ is fitted on data. 
