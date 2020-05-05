@@ -129,7 +129,7 @@ prov.vec = c(unique(as.character(sims$Province)), 'Canada')
 
 # Removing problems:
 prov.vec = prov.vec[prov.vec != 'NL']
-prov.vec = prov.vec[prov.vec != 'NS']
+# prov.vec = prov.vec[prov.vec != 'NS']
 
 for( prov in prov.vec ){  
     

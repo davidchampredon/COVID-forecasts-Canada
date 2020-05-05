@@ -49,7 +49,8 @@ calc_distance <- function(sim, obs, t.fit.start, t.fit.end,
     rng = t.fit.start:t.fit.end
     
     # Weights:
-    w = ifelse(recency>0, rng^recency, 1.0)
+    w = 1
+    if(recency>0) w = rng^recency
     
     # Distance calculation:
     tmp = (sim[rng] - obs[rng])^2 * w / sum(w)
