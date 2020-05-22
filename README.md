@@ -13,7 +13,8 @@ The code implements the epidemiological model that performs daily forecast of Co
 * `src`: source code.
 * `doc`: model documentation
 * `data`: data files (some are imported from the web by a script)
-* `reports`: LaTeX code to generate summary forecasting reports 
+* `reports`: LaTeX code to generate summary forecasting reports
+* `fcsts`: daily summary forecasting reports (PDF format)
 
 ## Running scripts
 
